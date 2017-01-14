@@ -1,8 +1,35 @@
 from . import Cmd
 from ..query import Query
 
+class AssignCommand(Cmd):
+    cmd = 'assign'
+
+    @staticmethod
+    def configure(parser):
+        parser.add_argument('assignee', help='User to assign to')
+        parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
+
+    def run(self, conf, args):
+        issue = conf['jira'].issue(args.issue)
+        transitions = conf['jira'].transitions(issue)
+        available_transitions = []
+        for transition in transitions:
+            available_transitions.append(transition['name'])
+            if transition['name'] == args.status:
+                conf['jira'].transition_issue(issue, transition['id'])
+                return True
+        self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
+        return False
+
 class MineCommand(Cmd):
     cmd = 'mine'
+
+    @staticmethod
+    def configure(parser):
+        parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
+        parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
+        parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
+        parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
@@ -14,4 +41,30 @@ class MineCommand(Cmd):
         q.add('assignee=currentUser()')
         if args.open:
             q.add('status != Closed AND status != Resolved')
+        if args.in_progress:
+            q.add('status != "In Progress"')
+        if args.internal_review:
+            q.add('status != "Internal Review"')
+        if args.client_review:
+            q.add('status != "Client Review"')
         return conf['jira'].search_issues("%s" % q)
+
+class StatusCommand(Cmd):
+    cmd = 'status'
+
+    @staticmethod
+    def configure(parser):
+        parser.add_argument('status', help='Issue status to change it to')
+        parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
+
+    def run(self, conf, args):
+        issue = conf['jira'].issue(args.issue)
+        transitions = conf['jira'].transitions(issue)
+        available_transitions = []
+        for transition in transitions:
+            available_transitions.append(transition['name'])
+            if transition['name'] == args.status:
+                conf['jira'].transition_issue(issue, transition['id'])
+                return True
+        self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
+        return False

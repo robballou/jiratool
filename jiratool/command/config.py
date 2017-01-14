@@ -1,6 +1,7 @@
 import json
 from . import Cmd
 from .. import configuration
+from ..format import get_formatters
 
 class ListCommand(Cmd):
     cmd = 'list'
@@ -13,8 +14,14 @@ class ListCommand(Cmd):
 
 class SourcesCommand(Cmd):
     cmd = 'sources'
-    formatter = 'output.stdout'
+    formatter = 'output.lines'
 
     def run(self, conf, args):
-        conf_copy = conf
-        return "%s" % configuration.find_configuration_file()
+        return configuration.find_configuration_file()
+
+class FormattersCommand(Cmd):
+    cmd = 'formatters'
+    formatter = 'output.lines'
+
+    def run(self, conf, args):
+        return get_formatters()
