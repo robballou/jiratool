@@ -36,4 +36,6 @@ def run_command(conf, args):
         raise Exception("Command does not exist: %s" % (args.command))
 
     this_command = get_command(args.cmd)
+    if not args.no_defaults:
+        this_command.update_args(conf, args)
     return (this_command.run(conf, args), this_command.formatter)

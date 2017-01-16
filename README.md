@@ -2,6 +2,18 @@
 
 A set of command line interfaces for common JIRA tasks. One difference for this tool vs other CLI tools is that it is configurable for the current context.
 
+## Requirements
+
+* Python 3 (it *might* work in Python 2, but not tested)
+* `pyyaml`
+* `jira`
+* `prettytable`
+
+## Install
+
+1. Install packages: `pip install pyyaml jira install`
+1. Add a symlink: `pushd /usr/local/bin && ln -s PATH/jiratool.py jiratool && popd`
+
 ## Configuration
 
 This tool currently uses basic auth for functionality. It can build on [jira-cmd](https://github.com/germanrcuriel/jira-cmd)'s configuration or you can make your own configuration.
