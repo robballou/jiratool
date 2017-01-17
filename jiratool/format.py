@@ -3,6 +3,10 @@ from . import formatter
 def get_formatter(conf, args, requested_format = None):
     if args.formatter:
         requested_format = args.formatter
+    if args.json:
+        requested_format = 'json.basic'
+    if args.yaml:
+        requested_format = 'yaml.basic'
     if requested_format:
         (mod, mod_formatter) = requested_format.split('.')
         return getattr(formatter.formatters[mod], mod_formatter)
