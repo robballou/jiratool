@@ -1,16 +1,19 @@
 from . import Cmd
 from ..query import Query
 
+def common_flags(parser):
+    parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
+    parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
+    parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
+    parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
+    parser.add_argument('--truncate', help='Truncate the summary', default=50)
+
 class AllCommand(Cmd):
     cmd = 'all'
 
     @staticmethod
     def configure(parser):
-        parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
-        parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
-        parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
-        parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
-        parser.add_argument('--truncate', help='Truncate the summary', default=50)
+        common_flags(parser)
         parser.add_argument('--assignee', help='Filter by assignee', default=None)
 
     def run(self, conf, args):
@@ -56,10 +59,7 @@ class MineCommand(Cmd):
 
     @staticmethod
     def configure(parser):
-        parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
-        parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
-        parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
-        parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
+        common_flags(parser)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
