@@ -64,6 +64,9 @@ $ jiratool projects.board -o
 
 # commit with the current "in progress" items in the commit message
 $ git commit -am "$(jirtool --format=id.list issues.mine --in-progress): Updated things"
+
+# open an issue
+$ jiratool issues.open EXAMPLE-101
 ```
 
 ## Commands
@@ -79,6 +82,7 @@ $ git commit -am "$(jirtool --format=id.list issues.mine --in-progress): Updated
 * `issues.all`: list all issues for a project. Must have a project in the current context or one specified with the `--project` flag.
 * `issues.assign`: assign issues to a user: `issues.assign ASSIGNEE ISSUE [...]`
 * `issues.mine`: your issues for a project.
+* `issues.open`: open one or more issues.
 * `issues.status`: change status for a number of issues: `issues.status STATUS ISSUE [...]`
 
 ### Projects

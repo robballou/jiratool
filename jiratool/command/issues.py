@@ -1,6 +1,7 @@
 from . import Cmd
 from ..query import Query
 from ..exceptions import JiraToolException
+import subprocess
 
 def handle_common_filters(conf, args, q):
     if 'assignee' in args and args.assignee:
@@ -92,6 +93,18 @@ class MineCommand(Cmd):
         q.add('assignee=currentUser()')
         handle_common_filters(conf, args, q)
         return conf['jira'].search_issues("%s" % q)
+
+class OpenCommand(Cmd):
+    cmd = 'open'
+
+    @staticmethod
+    def configure(parser):
+        parser.add_argument('issue', help='Open the issue URLs', nargs='+')
+
+    def run(self, conf, args):
+        for issue_key in args.issue:
+            subprocess.run(['open', '%sbrowse/%s' % (conf['auth']['url'], issue_key)])
+        return True
 
 class StatusCommand(Cmd):
     cmd = 'status'
