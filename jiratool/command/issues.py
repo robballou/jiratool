@@ -43,16 +43,21 @@ class AssignCommand(Cmd):
         parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
 
     def run(self, conf, args):
-        issue = conf['jira'].issue(args.issue)
-        transitions = conf['jira'].transitions(issue)
-        available_transitions = []
-        for transition in transitions:
-            available_transitions.append(transition['name'])
-            if transition['name'] == args.status:
-                conf['jira'].transition_issue(issue, transition['id'])
-                return True
-        self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
-        return False
+        for issue_key in args.issue:
+            issue = conf['jira'].issue(args.issue)
+            transitions = conf['jira'].transitions(issue)
+            available_transitions = []
+            transition_id = None
+            for transition in transitions:
+                available_transitions.append(transition['name'])
+                if transition['name'] == args.status:
+                    transition_id = transition['id']
+                    break
+            if not transition_id:
+                self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
+                return False
+            conf['jira'].transition_issue(issue, transition['id'])
+        return True
 
 class MineCommand(Cmd):
     cmd = 'mine'
