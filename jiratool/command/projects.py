@@ -36,8 +36,7 @@ class BoardCommand(Cmd):
 
     @staticmethod
     def configure(parser):
-        # parser.add_argument('--filter', help='Regex for filtering projects')
-        pass
+        parser.add_argument('--open', '-o', help='Open the resulting URL', action='store_true')
 
     def run(self, conf, args):
         project = self.get_project(conf, args)

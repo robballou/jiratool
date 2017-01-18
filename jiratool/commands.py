@@ -1,4 +1,5 @@
 from . import command
+import subprocess
 
 def configure_commands(subparser):
     commands = get_commands()
@@ -36,6 +37,21 @@ def run_command(conf, args):
         raise Exception("Command does not exist: %s" % (args.command))
 
     this_command = get_command(args.cmd)
+    results = this_command.run(conf, args)
     if not args.no_defaults:
         this_command.update_args(conf, args)
-    return (this_command.run(conf, args), this_command.formatter)
+
+    # handle opening URLs
+    if 'open' in args and args.open:
+        has_url = 'url' in results
+        result = None
+        if has_url:
+            result = results
+        if type(results) is list:
+            has_url = 'url' in results[0]
+            if has_url:
+                result = results[0]
+        if result:
+            subprocess.run(['open', result['url']])
+
+    return (results, this_command.formatter)

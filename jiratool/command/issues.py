@@ -72,11 +72,11 @@ class MineCommand(Cmd):
         if args.open:
             q.add('status != Closed AND status != Resolved')
         if args.in_progress:
-            q.add('status != "In Progress"')
+            q.add('status = "In Progress"')
         if args.internal_review:
-            q.add('status != "Internal Review"')
+            q.add('status = "Internal Review"')
         if args.client_review:
-            q.add('status != "Client Review"')
+            q.add('status = "Client Review"')
         return conf['jira'].search_issues("%s" % q)
 
 class StatusCommand(Cmd):
