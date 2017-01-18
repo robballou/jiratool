@@ -3,6 +3,7 @@ from jira import JIRA
 from jiratool import configuration
 from jiratool import commands
 from jiratool.format import get_formatter
+from jiratool.exceptions import JiraToolException
 import argparse
 import sys
 
@@ -27,7 +28,7 @@ if __name__ == '__main__':
 
     try:
         (results, formatter) = commands.run_command(conf, args)
-    except Exception as e:
+    except JiraToolException as e:
         sys.stderr.write("Error: %s\n" % e)
         sys.exit(1)
 

@@ -34,7 +34,7 @@ def find_configuration_file():
 def load():
     sources = find_configuration_file()
     if len(sources) == 0:
-        raise Exception('Could not locate configuration file')
+        raise JiraToolException('Could not locate configuration file')
     configuration = {}
     for source in sources:
         (root, ext) = os.path.splitext(source)
@@ -46,6 +46,14 @@ def load():
             with open(source, 'r') as fp:
                 this_configuration = yaml.load(fp)
                 configuration = merge_configurations(configuration, this_configuration)
+
+    default_configuration = {
+        'status_options': {
+            'closed': ['Closed', 'Resolved', 'Done'],
+        }
+    }
+
+    configuration = merge_configurations(configuration, default_configuration)
     return configuration
 
 def merge_configurations(*configurations):

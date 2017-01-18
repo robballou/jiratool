@@ -1,5 +1,6 @@
 from . import command
 import subprocess
+import jira
 
 def configure_commands(subparser):
     commands = get_commands()
@@ -34,7 +35,7 @@ def run_command(conf, args):
     commands = get_commands()
 
     if args.cmd not in commands:
-        raise Exception("Command does not exist: %s" % (args.command))
+        raise JiraToolException("Command does not exist: %s" % (args.command))
 
     this_command = get_command(args.cmd)
     results = this_command.run(conf, args)
@@ -42,15 +43,26 @@ def run_command(conf, args):
         this_command.update_args(conf, args)
 
     # handle opening URLs
-    if 'open' in args and args.open:
-        has_url = 'url' in results
+    if 'open_url' in args and args.open_url:
         result = None
-        if has_url:
-            result = results
-        if type(results) is list:
+        results_type = type(results)
+
+        # if the results is a list, open the first if it has a URL
+        if results_type is list:
             has_url = 'url' in results[0]
             if has_url:
                 result = results[0]
+        # open the first issue
+        elif results_type is jira.client.ResultList:
+            for this_result in results:
+                result = {'url': "%sbrowse/%s" % (conf['auth']['url'], this_result.key)}
+                break
+        else:
+            try:
+                if 'url' in results:
+                    result = results
+            except Exception:
+                pass
         if result:
             subprocess.run(['open', result['url']])
 

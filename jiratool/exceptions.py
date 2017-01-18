@@ -1,0 +1,2 @@
+class JiraToolException(Exception):
+    pass

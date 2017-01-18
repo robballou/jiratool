@@ -1,8 +1,30 @@
 from . import Cmd
 from ..query import Query
+from ..exceptions import JiraToolException
+
+def handle_common_filters(conf, args, q):
+    if 'assignee' in args and args.assignee:
+        q.add('assignee=%s' % args.assignee)
+    if args.open:
+        query_string = []
+        for status in conf['status_options']['closed']:
+            query_string.append('status != "%s"' % status)
+        q.add(" AND ".join(query_string))
+    if args.in_progress:
+        q.add('status = "In Progress"')
+    if args.new:
+        q.add('status = "New"')
+    if args.ready_for_work:
+        q.add('status = "Ready for Work"')
+    if args.internal_review:
+        q.add('status = "Internal Review"')
+    if args.client_review:
+        q.add('status = "Client Review"')
 
 def common_flags(parser):
     parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
+    parser.add_argument('--new', help='Only new issues', action='store_true', default=False)
+    parser.add_argument('--ready-for-work', help='Only ready-for-work issues', action='store_true', default=False)
     parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
     parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
     parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
@@ -15,23 +37,16 @@ class AllCommand(Cmd):
     def configure(parser):
         common_flags(parser)
         parser.add_argument('--assignee', help='Filter by assignee', default=None)
+        parser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
         if not project:
-            raise Exception('Could not find project in the command options or in configuration.')
+            raise JiraToolException('Could not find project in the command options or in configuration.')
 
         q = Query()
         q.add('project=%s' % project)
-        q.add('assignee=%s' % args.assignee)
-        if args.open:
-            q.add('status != Closed AND status != Resolved')
-        if args.in_progress:
-            q.add('status != "In Progress"')
-        if args.internal_review:
-            q.add('status != "Internal Review"')
-        if args.client_review:
-            q.add('status != "Client Review"')
+        handle_common_filters(conf, args, q)
         return conf['jira'].search_issues("%s" % q)
 
 class AssignCommand(Cmd):
@@ -65,23 +80,17 @@ class MineCommand(Cmd):
     @staticmethod
     def configure(parser):
         common_flags(parser)
+        parser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
         if not project:
-            raise Exception('Could not find project')
+            raise JiraToolException('Could not find project')
 
         q = Query()
         q.add('project=%s' % project)
         q.add('assignee=currentUser()')
-        if args.open:
-            q.add('status != Closed AND status != Resolved')
-        if args.in_progress:
-            q.add('status = "In Progress"')
-        if args.internal_review:
-            q.add('status = "Internal Review"')
-        if args.client_review:
-            q.add('status = "Client Review"')
+        handle_common_filters(conf, args, q)
         return conf['jira'].search_issues("%s" % q)
 
 class StatusCommand(Cmd):
