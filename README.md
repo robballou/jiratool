@@ -6,7 +6,7 @@ A set of command line interfaces for common JIRA tasks. One difference for this 
 
 * Python 3 (it *might* work in Python 2, but not tested)
 * `pyyaml`
-* `jira`
+* `jira` ([pycontribs/jira](https://github.com/pycontribs/jira))
 * `prettytable`
 
 ## Install
