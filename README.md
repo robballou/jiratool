@@ -49,6 +49,23 @@ When you run the command, it will check the parent path for `.jira.json` or `.ji
 project: EX1
 ```
 
+## Examples
+
+```shell
+# show open issues assigned to you for the current project
+$ jirtool issues.mine --open
+
+# show open issues assigned to jane on the current project
+$ jirtool issues.all --open --assignee=jane
+
+# open the current project's board
+$ jiratool projects.board --open-url
+$ jiratool projects.board -o
+
+# commit with the current "in progress" items in the commit message
+$ git commit -am "$(jirtool --format=id.list issues.mine --in-progress): Updated things"
+```
+
 ## Commands
 
 ### Config
