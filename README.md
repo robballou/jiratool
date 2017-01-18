@@ -92,4 +92,4 @@ $ jiratool issues.open EXAMPLE-101
 
 ### Users
 
-* `project.users`: list all users, with filter options
+* `users.all`: list all users, with filter options
