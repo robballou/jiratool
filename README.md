@@ -68,9 +68,9 @@ Key: `options.status`
 A data structure defining some status settings. Currently supports `closed`:
 
 ```json
-options: {
-  status: {
-    close: ['Closed', 'Done', 'Resolved']
+"options": {
+  "status": {
+    "close": ["Closed", "Done", "Resolved"]
   }
 }
 ```
