@@ -16,15 +16,15 @@ if __name__ == '__main__':
     parser.add_argument('--no-defaults', '-n', help='Do not include default options from configuration files', default=False, action='store_true')
 
     subparser = parser.add_subparsers()
-    commands.configure_commands(subparser)
+
+    conf = configuration.load()
+    conf['jira'] = JIRA(conf['auth']['url'], basic_auth=configuration.get_authentication(conf))
+    commands.configure_commands(conf, subparser)
 
     args = parser.parse_args()
     if 'cmd' not in args:
         parser.print_usage()
         sys.exit()
-
-    conf = configuration.load()
-    conf['jira'] = JIRA(conf['auth']['url'], basic_auth=configuration.get_authentication(conf))
 
     try:
         (results, formatter) = commands.run_command(conf, args)

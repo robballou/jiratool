@@ -2,11 +2,41 @@ import os
 import json
 import yaml
 import base64
+from collections import OrderedDict
 
 def get_authentication(configuration):
     if 'token' in configuration['auth']:
         decoded = base64.b64decode(configuration['auth']['token'])
         return decoded.decode('utf-8').split(':')
+
+def get_status_names(configuration):
+    statuses = configuration['jira'].statuses()
+    statuses = [status.name for status in statuses]
+    statuses.sort()
+    return statuses
+
+def get_status_flags(configuration):
+    statuses = configuration['jira'].statuses()
+    statuses = sorted(statuses, key=lambda status: status.name)
+    status_map = OrderedDict()
+    for status in statuses:
+        flag = status.name.lower()
+        flag = flag.replace(' ', '-')
+        flag = flag.replace('.', '')
+        count = 1
+        while flag in status_map:
+            temp_flag = "%s%d" % (flag, count)
+            if temp_flag not in status_map:
+                flag = temp_flag
+            count += 1
+        status_map[flag] = status
+    return status_map
+
+def get_status_name_from_flag(configuration, flag):
+    flags = get_status_flags(configuration)
+    if flag in flags:
+        return flags[flag]
+    return False
 
 def find_configuration_file():
     sources = [

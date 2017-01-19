@@ -1,4 +1,4 @@
-from . import Cmd
+from . import Cmd, OpenUrlCmd
 from ..query import Query
 import re
 import warnings
@@ -7,8 +7,8 @@ class AllCommand(Cmd):
     cmd = 'all'
     formatter = 'table.custom'
 
-    @staticmethod
-    def configure(parser):
+    @classmethod
+    def configure(cls, conf, parser):
         parser.add_argument('--filter', help='Regex for filtering projects')
 
     def filter_project(self, project, filter):
@@ -30,13 +30,9 @@ class AllCommand(Cmd):
         args.align = {'Key': 'l', 'Name': 'l'}
         return [self.format_project(project, args) for project in projects if self.filter_project(project, args.filter)]
 
-class BoardCommand(Cmd):
+class BoardCommand(OpenUrlCmd):
     cmd = 'board'
     formatter = 'table.custom'
-
-    @staticmethod
-    def configure(parser):
-        parser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
 
     def run(self, conf, args):
         project = self.get_project(conf, args)

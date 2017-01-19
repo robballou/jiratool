@@ -76,6 +76,8 @@ $ jiratool issues.open EXAMPLE-101
 * `config.list`: output the configuration for the current context.
 * `config.sources`: list the loaded sources for the current context.
 * `config.formatters`: list available formatters
+* `config.statuses`: list available statuses
+* `config.status_flags`: list available status flags. Some commands accept status flags as `--status-STATUS`.
 
 ### Issues
 

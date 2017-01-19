@@ -13,6 +13,10 @@ def table_basic(conf, args, rows):
     table = PrettyTable(headers)
     table.align['ID'] = 'l'
     table.align['Summary'] = 'l'
+
+    if 'truncate' not in args:
+        args.truncate = 42
+
     for row in rows:
         this_row = [row.key, truncate(row.fields.summary, args.truncate), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
         table.add_row(this_row)

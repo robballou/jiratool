@@ -6,8 +6,8 @@ class ListCommand(Cmd):
     cmd = 'list'
     formatter = 'output.lines'
 
-    @staticmethod
-    def configure(parser):
+    @classmethod
+    def configure(cls, conf, parser):
         parser.add_argument('--filter', nargs='?')
 
     def run(self, conf, args):

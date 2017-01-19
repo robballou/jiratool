@@ -1,6 +1,7 @@
-from . import Cmd
+from . import Cmd, OpenUrlCmd
 from ..query import Query
 from ..exceptions import JiraToolException
+from ..configuration import get_status_flags
 import subprocess
 
 def handle_common_filters(conf, args, q):
@@ -11,34 +12,29 @@ def handle_common_filters(conf, args, q):
         for status in conf['status_options']['closed']:
             query_string.append('status != "%s"' % status)
         q.add(" AND ".join(query_string))
-    if args.in_progress:
-        q.add('status = "In Progress"')
-    if args.new:
-        q.add('status = "New"')
-    if args.ready_for_work:
-        q.add('status = "Ready for Work"')
-    if args.internal_review:
-        q.add('status = "Internal Review"')
-    if args.client_review:
-        q.add('status = "Client Review"')
 
-def common_flags(parser):
-    parser.add_argument('--open', help='Only open issues', action='store_true', default=False)
-    parser.add_argument('--new', help='Only new issues', action='store_true', default=False)
-    parser.add_argument('--ready-for-work', help='Only ready-for-work issues', action='store_true', default=False)
-    parser.add_argument('--in-progress', help='Only in-progress issues', action='store_true', default=False)
-    parser.add_argument('--client-review', help='Only client review issues', action='store_true', default=False)
-    parser.add_argument('--internal-review', help='Only internal review issues', action='store_true', default=False)
-    parser.add_argument('--truncate', help='Truncate the summary', default=50)
+    flags = get_status_flags(conf)
 
-class AllCommand(Cmd):
+    for flag in flags:
+        arg = 'status_%s' % flag.replace('-', '_')
+        if arg in args and getattr(args, arg):
+            q.add('status = "%s"' % flags[flag].name)
+
+def common_flags(conf, parser):
+    parser.add_argument('--open', help='Only show issues with an open status', action='store_true', default=False)
+
+    flags = get_status_flags(conf)
+    for flag in flags:
+        parser.add_argument('--status-%s' % flag, help='Only show issues with the status "%s"' % flags[flag].name, default=False, action='store_true')
+
+class AllCommand(OpenUrlCmd):
     cmd = 'all'
 
-    @staticmethod
-    def configure(parser):
-        common_flags(parser)
+    @classmethod
+    def configure(cls, conf, parser):
+        super().configure(conf, parser)
+        common_flags(conf, parser)
         parser.add_argument('--assignee', help='Filter by assignee', default=None)
-        parser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
@@ -53,8 +49,8 @@ class AllCommand(Cmd):
 class AssignCommand(Cmd):
     cmd = 'assign'
 
-    @staticmethod
-    def configure(parser):
+    @classmethod
+    def configure(cls, conf, parser):
         parser.add_argument('assignee', help='User to assign to')
         parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
 
@@ -75,13 +71,13 @@ class AssignCommand(Cmd):
             conf['jira'].transition_issue(issue, transition['id'])
         return True
 
-class MineCommand(Cmd):
+class MineCommand(OpenUrlCmd):
     cmd = 'mine'
 
-    @staticmethod
-    def configure(parser):
-        common_flags(parser)
-        parser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
+    @classmethod
+    def configure(cls, conf, parser):
+        super().configure(conf, parser)
+        common_flags(conf, parser)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
@@ -97,8 +93,8 @@ class MineCommand(Cmd):
 class OpenCommand(Cmd):
     cmd = 'open'
 
-    @staticmethod
-    def configure(parser):
+    @classmethod
+    def configure(cls, conf, parser):
         parser.add_argument('issue', help='Open the issue URLs', nargs='+')
 
     def run(self, conf, args):
@@ -109,8 +105,8 @@ class OpenCommand(Cmd):
 class StatusCommand(Cmd):
     cmd = 'status'
 
-    @staticmethod
-    def configure(parser):
+    @classmethod
+    def configure(cls, conf, parser):
         parser.add_argument('status', help='Issue status to change it to')
         parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
 

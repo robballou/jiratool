@@ -8,8 +8,8 @@ __all__ = [ basename(f)[:-3] for f in modules if isfile(f)]
 class Cmd(object):
     formatter = None
 
-    @staticmethod
-    def configure(subparser):
+    @classmethod
+    def configure(cls, conf, subparser):
         pass
 
     def error_message(self, message):
@@ -39,6 +39,12 @@ class Cmd(object):
                 opt = self.has_option(conf, args, arg)
                 if opt != None:
                     setattr(args, arg, opt)
+
+class OpenUrlCmd(Cmd):
+
+    @classmethod
+    def configure(cls, conf, subparser):
+        subparser.add_argument('--open-url', '-o', help='Open the resulting URL', action='store_true')
 
 command = {}
 for item in __all__:

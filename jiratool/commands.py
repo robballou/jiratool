@@ -1,14 +1,19 @@
 from . import command
 import subprocess
 import jira
+import sys
 
-def configure_commands(subparser):
+def configure_commands(conf, subparser):
     commands = get_commands()
     for cmd in commands:
-        this_command_class = get_command_class(cmd)
-        this_parser = subparser.add_parser(cmd)
-        this_command_class.configure(this_parser)
-        this_parser.set_defaults(cmd=cmd)
+        try:
+            this_command_class = get_command_class(cmd)
+            this_parser = subparser.add_parser(cmd)
+            this_command_class.configure(conf, this_parser)
+            this_parser.set_defaults(cmd=cmd)
+        except Exception as err:
+            sys.stderr.write("Could not configure command: %s (%s): %s\n" % (cmd, this_command_class, err))
+            raise err
 
 def get_commands():
     commands = []
@@ -21,11 +26,19 @@ def get_commands():
                     commands.append("%s.%s" % (cmd, this_item.cmd))
             except TypeError:
                 pass
+            except AttributeError:
+                pass
     return commands
 
 def get_command_class(cmd):
     (parent, sub) = cmd.split('.')
-    command_name = "%sCommand" % sub.title()
+
+    sub = sub.title()
+    if '_' in sub:
+        sub_pieces = sub.split('_')
+        sub = ''.join([piece.title() for piece in sub_pieces])
+
+    command_name = "%sCommand" % sub
     return getattr(command.command[parent], command_name)
 
 def get_command(cmd):
