@@ -56,19 +56,8 @@ class AssignCommand(Cmd):
 
     def run(self, conf, args):
         for issue_key in args.issue:
-            issue = conf['jira'].issue(args.issue)
-            transitions = conf['jira'].transitions(issue)
-            available_transitions = []
-            transition_id = None
-            for transition in transitions:
-                available_transitions.append(transition['name'])
-                if transition['name'] == args.status:
-                    transition_id = transition['id']
-                    break
-            if not transition_id:
-                self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
-                return False
-            conf['jira'].transition_issue(issue, transition['id'])
+            issue = conf['jira'].issue(issue_key)
+            issue.update(assignee=args.assignee)
         return True
 
 class MineCommand(OpenUrlCmd):
