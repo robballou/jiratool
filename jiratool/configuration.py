@@ -9,6 +9,8 @@ def get_authentication(configuration):
     if 'token' in configuration['auth']:
         decoded = base64.b64decode(configuration['auth']['token'])
         return decoded.decode('utf-8').split(':')
+    if 'user' in configuration['auth'] and 'pass' in configuration['auth']:
+        return (configuration['auth']['user'], configuration['auth']['pass'])
 
 def get_status_names(configuration):
     statuses = configuration['jira'].statuses()

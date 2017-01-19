@@ -39,6 +39,11 @@ This exists as `~/.jira/config.json`. Inside of this file, it stores the usernam
 
 Make sure this file is set to only be read by your user (`chmod 600 ~/.jira/config.json`)!
 
+The authentication can either be:
+
+* `auth.token`: this is a base64 encoded string of `username:password`.
+* `auth.username` and `auth.password`: this is a plan text copy of your username and password.
+
 ### global configuration
 
 You can also create either `~/.jira.json` or `~/.jira.yml` to configure the global connection. These should have the same `auth` structure above.
