@@ -4,12 +4,14 @@ A set of command line interfaces for common JIRA tasks. One difference for this 
 
 ## Requirements
 
-* Python 3 (it *might* work in Python 2, but not tested)
+* Python 3
 * `pyyaml`
 * `jira` ([pycontribs/jira](https://github.com/pycontribs/jira))
 * `prettytable`
 
 ## Install
+
+This is developed with Python 3. If your system uses Python 2, [consider using pyenv](https://github.com/yyuu/pyenv) to allow you to run both. Make sure you are using Python 3 when you run the first step of these install instructions.
 
 1. Install packages: `pip install -r requirements.txt`
 1. Add a symlink: `pushd /usr/local/bin && ln -s PATH/jiratool.py jiratool && popd`
