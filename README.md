@@ -51,6 +51,44 @@ When you run the command, it will check the parent path for `.jira.json` or `.ji
 project: EX1
 ```
 
+## Configuration Options
+
+Some other configuration options:
+
+### project
+
+Key: `project`
+
+The project to use by default for a context. Usually should be used on a project/directory level, but could be used globally.
+
+### status_options
+
+Key: `options.status`
+
+A data structure defining some status settings. Currently supports `closed`:
+
+```json
+options: {
+  status: {
+    close: ['Closed', 'Done', 'Resolved']
+  }
+}
+```
+
+### Command options
+
+Key: `options.CMD`
+
+Allows you to set default flags for a command. The following example sets the `issues.mine` command to only show open commands by default.
+
+```yaml
+options:
+  issues.mine:
+    open: 1
+```
+
+You can turn off the default options with `--no-default-options`
+
 ## Examples
 
 ```shell

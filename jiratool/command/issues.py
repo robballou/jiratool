@@ -9,7 +9,7 @@ def handle_common_filters(conf, args, q):
         q.add('assignee=%s' % args.assignee)
     if args.open:
         query_string = []
-        for status in conf['status_options']['closed']:
+        for status in conf['options']['status']['closed']:
             query_string.append('status != "%s"' % status)
         q.add(" AND ".join(query_string))
 
