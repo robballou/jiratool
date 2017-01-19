@@ -65,12 +65,12 @@ The project to use by default for a context. Usually should be used on a project
 
 Key: `options.status`
 
-A data structure defining some status settings. Currently supports `closed`:
+A data structure defining some status settings. Currently supports `closed`, which is a list of statuses that are considered "closed" or "not open". When commands have an `--open` flag, it will use these statuses to exclude issues.
 
 ```json
 "options": {
   "status": {
-    "close": ["Closed", "Done", "Resolved"]
+    "closed": ["Closed", "Done", "Resolved"]
   }
 }
 ```
