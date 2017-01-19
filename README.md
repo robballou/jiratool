@@ -64,6 +64,12 @@ $ jirtool issues.all --open --assignee=jane
 $ jiratool projects.board --open-url
 $ jiratool projects.board -o
 
+# assign issues
+$ jiratool issues.assign janedoe EXAMPLE-101 EXAMPLE-102
+
+# set issue status
+$ jiratool issues.status "Internal Review" EXAMPLE-101 EXAMPLE-102
+
 # commit with the current "in progress" items in the commit message
 $ git commit -am "$(jirtool --format=id.list issues.mine --in-progress): Updated things"
 
