@@ -2,6 +2,7 @@ from . import command
 import subprocess
 import jira
 import sys
+import json
 
 def configure_commands(conf, subparser):
     commands = get_commands()
@@ -44,6 +45,11 @@ def get_command_class(cmd):
 def get_command(cmd):
     return get_command_class(cmd)()
 
+def update_args_with_command_options(conf, args):
+    if 'options' in conf and args.cmd in conf['options']:
+        for option in conf['options'][args.cmd]:
+            setattr(args, option, conf['options'][args.cmd][option])
+
 def run_command(conf, args):
     commands = get_commands()
 
@@ -51,6 +57,12 @@ def run_command(conf, args):
         raise JiraToolException("Command does not exist: %s" % (args.command))
 
     this_command = get_command(args.cmd)
+    update_args_with_command_options(conf, args)
+    if args.debug:
+        copy = dict(conf)
+        del copy['jira']
+        sys.stderr.write("%s\n" % json.dumps(copy, indent=4))
+        sys.stderr.write("%s\n" % args)
     results = this_command.run(conf, args)
     if not args.no_defaults:
         this_command.update_args(conf, args)

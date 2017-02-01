@@ -67,10 +67,12 @@ project: EX1
 
 ```shell
 # show open issues assigned to you for the current project
-$ jirtool issues.mine --open
+$ jiratool issues.mine --open
+$ jiratool --project=EX issues.mine
+$ jiratool --project=EX --project=EX2 issues.mine
 
 # show open issues assigned to jane on the current project
-$ jirtool issues.all --open --assignee=jane
+$ jiratool issues.all --open --assignee=jane
 
 # open the current project's board
 $ jiratool projects.board --open-url
@@ -131,9 +133,10 @@ You can turn off the default options with `--no-default-options`
 
 ### Config
 
+* `config.current_project`: output the current project(s)
+* `config.formatters`: list available formatters
 * `config.list`: output the configuration for the current context.
 * `config.sources`: list the loaded sources for the current context.
-* `config.formatters`: list available formatters
 * `config.statuses`: list available statuses
 * `config.status_flags`: list available status flags. Some commands accept status flags as `--status-STATUS`.
 
@@ -141,6 +144,7 @@ You can turn off the default options with `--no-default-options`
 
 * `issues.all`: list all issues for a project. Must have a project in the current context or one specified with the `--project` flag.
 * `issues.assign`: assign issues to a user: `issues.assign ASSIGNEE ISSUE [...]`
+* `issues.details`: print details about an issue (or issues): `issues.details ISSUE [...]`
 * `issues.mine`: your issues for a project.
 * `issues.open`: open one or more issues.
 * `issues.status`: change status for a number of issues: `issues.status STATUS ISSUE [...]`

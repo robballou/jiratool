@@ -3,6 +3,7 @@ from ..query import Query
 from ..exceptions import JiraToolException
 from ..configuration import get_status_flags
 import subprocess
+import shutil
 
 def handle_common_filters(conf, args, q):
     if 'assignee' in args and args.assignee:
@@ -67,6 +68,59 @@ class AssignCommand(Cmd):
             issue = conf['jira'].issue(issue_key)
             issue.update(assignee=args.assignee)
         return True
+
+class DetailsCommand(Cmd):
+    cmd = 'details'
+    formatter = 'output.lines'
+
+    @classmethod
+    def configure(cls, conf, parser):
+        parser.add_argument('issue', help='The issue key(s) to retrieve', nargs="+")
+
+    def run(self, conf, args):
+        size = shutil.get_terminal_size((80, 20))
+        lines = []
+        for issue in args.issue:
+            this_issue = conf['jira'].issue(issue)
+            lines.append('-' * size.columns)
+            lines.append("%s: %s" % (issue, this_issue.fields.summary))
+            lines.append('-' * size.columns)
+            # for thing in this_issue.fields.__dict__:
+            #     print(thing)
+            lines.append('Status:\t\t%s' % this_issue.fields.status)
+            lines.append('Assignee:\t%s' % this_issue.fields.assignee)
+            lines.append('Updated:\t%s' % this_issue.fields.updated)
+            if this_issue.fields.description:
+                lines.append('-' * size.columns)
+                lines.append(this_issue.fields.description)
+            if this_issue.fields.issuelinks:
+                lines.append('-' * size.columns)
+                lines.append('LINKS')
+                lines.append('-' * size.columns)
+                for link in this_issue.fields.issuelinks:
+                    try:
+                        if getattr(link, 'inwardIssue'):
+                            lines.append("* %s: %s: %s" % (link.type.inward, link.inwardIssue, link.inwardIssue.fields.summary))
+                    except:
+                        pass
+                    try:
+                        if getattr(link, 'outwardIssue'):
+                            lines.append("* %s: %s: %s" % (link.type.outward, link.outwardIssue, link.outwardIssue.fields.summary))
+                    except:
+                        pass
+            if this_issue.fields.comment.comments:
+                lines.append('-' * size.columns)
+                lines.append('COMMENTS')
+                lines.append('-' * size.columns)
+                for comment in this_issue.fields.comment.comments:
+                    this_comment = conf['jira'].comment(issue, comment)
+                    lines.append('Author:\t%s' % this_comment.author.name)
+                    lines.append('Date:\t%s' % this_comment.created)
+                    lines.append('\n')
+                    lines.append(this_comment.body)
+                    lines.append('-' * size.columns)
+            lines.append("\n")
+        return lines
 
 class MineCommand(OpenUrlCmd):
     cmd = 'mine'
