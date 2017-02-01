@@ -142,7 +142,7 @@ You can turn off the default options with `--no-default-options`
 
 ### Issues
 
-* `issues.all`: list all issues for a project. Must have a project in the current context or one specified with the `--project` flag.
+* `issues.all`: list all issues for a project.
 * `issues.assign`: assign issues to a user: `issues.assign ASSIGNEE ISSUE [...]`
 * `issues.details`: print details about an issue (or issues): `issues.details ISSUE [...]`
 * `issues.mine`: your issues for a project.
