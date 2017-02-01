@@ -2,6 +2,8 @@ from os.path import dirname, basename, isfile
 import glob
 import importlib
 import sys
+from ..query import Query
+
 modules = glob.glob(dirname(__file__)+"/*.py")
 __all__ = [ basename(f)[:-3] for f in modules if isfile(f)]
 
@@ -17,8 +19,12 @@ class Cmd(object):
 
     def get_project(self, conf, args):
         if args.project:
+            if isinstance(args.project, str):
+                args.project = (args.project,)
             return args.project
         if 'project' in conf:
+            if isinstance(conf['project'], str):
+                conf['project'] = (conf['project'],)
             return conf['project']
         return False
 
@@ -32,6 +38,12 @@ class Cmd(object):
     def has_options(self, conf, args):
         if 'options' in conf and args.cmd in conf['options']:
             return True
+
+    def query_projects(self, conf, args, query, project):
+        projects_query = Query(joiner='OR')
+        for proj in project:
+            projects_query.add('project=%s' % proj)
+        query.add(projects_query)
 
     def update_args(self, conf, args):
         if self.has_options(conf, args):

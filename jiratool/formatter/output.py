@@ -6,7 +6,7 @@ def stderr(conf, args, results):
 def stdout(conf, args, results):
     if not isinstance(results, str):
         results = "%s" % results
-    sys.stdout.write(results)
+    sys.stdout.write("%s\n" % results)
 
 def lines(conf, args, results):
     for result in results:

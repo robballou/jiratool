@@ -4,6 +4,17 @@ from .. import configuration
 from ..format import get_formatters
 from ..configuration import get_status_names, get_status_flags
 
+class CurrentProjectCommand(Cmd):
+    cmd = 'current_project'
+    formatter = 'output.lines'
+
+    def run(self, conf, args):
+        if args.project:
+            return args.project
+        if 'project' in conf:
+            return conf['project']
+        return False
+
 class ListCommand(Cmd):
     cmd = 'list'
     formatter = 'output.stdout'

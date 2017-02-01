@@ -1,6 +1,13 @@
 # JIRA Tool
 
-A set of command line interfaces for common JIRA tasks. One difference for this tool vs other CLI tools is that it is configurable for the current context.
+A set of command line interfaces for common JIRA tasks.
+
+A couple reasons/design intentions for this tool:
+
+* It is configurable for the current context, so you can run similar commands in
+  different folders and get results specific to those projects.
+* It has options for computer-readable formats and enough useful functionality
+  that can be used in a scripted setting.
 
 ## Requirements
 
@@ -11,7 +18,7 @@ A set of command line interfaces for common JIRA tasks. One difference for this 
 
 ## Install
 
-This is developed with Python 3. If your system uses Python 2, [consider using pyenv](https://github.com/yyuu/pyenv) to allow you to run both. Make sure you are using Python 3 when you run the first step of these install instructions.
+This is developed with Python 3. If your system uses Python 2, [consider using pyenv](https://github.com/yyuu/pyenv) to allow you to run both (or similar tool). Make sure you are using Python 3 when you run the first step of these install instructions.
 
 1. Install packages: `pip install -r requirements.txt`
 1. Add a symlink: `pushd /usr/local/bin && ln -s PATH/jiratool.py jiratool && popd`
@@ -69,7 +76,7 @@ $ jirtool issues.all --open --assignee=jane
 $ jiratool projects.board --open-url
 $ jiratool projects.board -o
 
-# assign issues
+# assign issues to janedoe
 $ jiratool issues.assign janedoe EXAMPLE-101 EXAMPLE-102
 
 # set issue status

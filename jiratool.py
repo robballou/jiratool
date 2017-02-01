@@ -9,7 +9,7 @@ import sys
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='JIRA Tools')
-    parser.add_argument('--project', '-p', help='Project code')
+    parser.add_argument('--project', '-p', help='Project code', nargs="*")
     parser.add_argument('--formatter', '-f', help='Output formatter', default=None)
     parser.add_argument('--json', help='Output in JSON. Same as --formatter=json.basic', action='store_true')
     parser.add_argument('--yaml', help='Output in YAML. Same as --formatter=yaml.basic', action='store_true')

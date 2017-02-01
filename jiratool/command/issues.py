@@ -45,11 +45,12 @@ class AllCommand(OpenUrlCmd):
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
-        if not project:
-            raise JiraToolException('Could not find project in the command options or in configuration.')
+        if not project and not args.any:
+            raise JiraToolException('Could not find project')
 
         q = Query()
-        q.add('project=%s' % project)
+        if project and not args.any:
+            self.query_projects(conf, args, q, project)
         handle_common_filters(conf, args, q)
         return conf['jira'].search_issues("%s" % q)
 
@@ -81,10 +82,11 @@ class MineCommand(OpenUrlCmd):
             raise JiraToolException('Could not find project')
 
         q = Query()
-        if project:
-            q.add('project=%s' % project)
+        if project and not args.any:
+            self.query_projects(conf, args, q, project)
         q.add('assignee=currentUser()')
         handle_common_filters(conf, args, q)
+        print("%s" % q)
         return conf['jira'].search_issues("%s" % q)
 
 class OpenCommand(Cmd):
