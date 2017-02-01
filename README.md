@@ -157,3 +157,21 @@ You can turn off the default options with `--no-default-options`
 ### Users
 
 * `users.all`: list all users, with filter options
+
+## Formatters
+
+* `id.first`
+* `id.lines`
+* `id.list`
+* `json.basic`
+* `json.ids`
+* `output.lines`
+* `output.list`
+* `output.stderr`
+* `output.stdout`
+* `table.PrettyTable`
+* `table.custom`
+* `table.table_basic`
+* `table.truncate`
+* `yaml.basic`
+* `yaml.ids`
