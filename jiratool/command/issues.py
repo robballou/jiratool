@@ -86,7 +86,6 @@ class MineCommand(OpenUrlCmd):
             self.query_projects(conf, args, q, project)
         q.add('assignee=currentUser()')
         handle_common_filters(conf, args, q)
-        print("%s" % q)
         return conf['jira'].search_issues("%s" % q)
 
 class OpenCommand(Cmd):
