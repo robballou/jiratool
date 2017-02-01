@@ -35,29 +35,34 @@ class BoardCommand(OpenUrlCmd):
     formatter = 'table.custom'
 
     def run(self, conf, args):
-        project = self.get_project(conf, args)
-        project = conf['jira'].project(project)
+        projects = self.get_project(conf, args)
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            boards = conf['jira'].boards()
+        boards = []
+        for project in projects:
+            project = conf['jira'].project(project)
 
-        args.headers = ['ID', 'Name', 'URL']
-        args.row_keys = ['id', 'name', 'url']
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                project_boards = conf['jira'].boards()
 
-        project_board = None
-        for board in boards:
-            try:
-                for board_project in board.filter.queryProjects.projects:
-                    if board_project.key == project.key:
-                        project_board = board
-                        break
-            except:
-                pass
+            args.headers = ['ID', 'Name', 'URL']
+            args.row_keys = ['id', 'name', 'url']
 
-        if project_board != None:
-            url = project_board._options['server'] + '/secure/RapidBoard.jspa?rapidView=%s' % project_board.id
-            return [{'id': project_board.id, 'name': project_board.raw['name'], 'url': url}]
+            project_board = None
+            for board in project_boards:
+                try:
+                    for board_project in board.filter.queryProjects.projects:
+                        if board_project.key == project.key:
+                            project_board = board
+                            break
+                except:
+                    pass
 
+            if project_board != None:
+                url = project_board._options['server'] + '/secure/RapidBoard.jspa?rapidView=%s' % project_board.id
+                boards.append({'id': project_board.id, 'name': project_board.raw['name'], 'url': url})
+
+        if boards:
+            return boards
         self.error_message('Could not find project board')
         return False
