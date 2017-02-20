@@ -144,6 +144,7 @@ You can turn off the default options with `--no-default-options`
 
 * `issues.all`: list all issues for a project.
 * `issues.assign`: assign issues to a user: `issues.assign ASSIGNEE ISSUE [...]`
+* `issues.comment`: add a comment to the issue: `issues.comment "Comment here" ISSUE [...]`
 * `issues.details`: print details about an issue (or issues): `issues.details ISSUE [...]`
 * `issues.mine`: your issues for a project.
 * `issues.open`: open one or more issues.

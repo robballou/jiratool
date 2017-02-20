@@ -43,6 +43,7 @@ class AllCommand(OpenUrlCmd):
         super().configure(conf, parser)
         common_flags(conf, parser)
         parser.add_argument('--assignee', help='Filter by assignee', default=None)
+        parser.add_argument('--filter', help='Filter applied to the summary', default=None)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
@@ -53,6 +54,8 @@ class AllCommand(OpenUrlCmd):
         if project and not args.any:
             self.query_projects(conf, args, q, project)
         handle_common_filters(conf, args, q)
+        if args.filter:
+            q.add('summary ~ "%s"' % args.filter)
         return conf['jira'].search_issues("%s" % q)
 
 class AssignCommand(Cmd):
@@ -62,12 +65,27 @@ class AssignCommand(Cmd):
     def configure(cls, conf, parser):
         parser.add_argument('assignee', help='User to assign to')
         parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
+        parser.add_argument('--comment', '-c', help="Add a comment to the issue(s)")
 
     def run(self, conf, args):
         for issue_key in args.issue:
             issue = conf['jira'].issue(issue_key)
             issue.update(assignee=args.assignee)
+            if args.comment:
+                conf['jira'].add_comment(issue_key, args.comment)
         return True
+
+class CommentCommand(Cmd):
+    cmd = 'comment'
+
+    @classmethod
+    def configure(cls, conf, parser):
+        parser.add_argument('comment', help="The comment to add")
+        parser.add_argument('issue', help="The issue key(s) to comment on", nargs="+")
+
+    def run(self, conf, args):
+        for issue in args.issue:
+            conf['jira'].add_comment(issue, args.comment)
 
 class DetailsCommand(Cmd):
     cmd = 'details'
