@@ -1,0 +1,2 @@
+class MockJira(object):
+    pass
