@@ -1,6 +1,6 @@
 from . import Cmd, OpenUrlCmd
 from ..query import Query
-from ..exceptions import JiraToolException
+from ..exceptions import JiraToolException, could_not_find_project
 from ..configuration import get_status_flags
 import subprocess
 import shutil
@@ -48,7 +48,7 @@ class AllCommand(OpenUrlCmd):
     def run(self, conf, args):
         project = self.get_project(conf, args)
         if not project and not args.any:
-            raise JiraToolException('Could not find project')
+            raise JiraToolException(could_not_find_project())
 
         q = Query()
         if project and not args.any:
@@ -147,17 +147,20 @@ class MineCommand(OpenUrlCmd):
     def configure(cls, conf, parser):
         super().configure(conf, parser)
         common_flags(conf, parser)
+        parser.add_argument('--filter', help='Filter applied to the summary', default=None)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
         if not project and not args.any:
-            raise JiraToolException('Could not find project')
+            raise JiraToolException(could_not_find_project())
 
         q = Query()
         if project and not args.any:
             self.query_projects(conf, args, q, project)
         q.add('assignee=currentUser()')
         handle_common_filters(conf, args, q)
+        if args.filter:
+            q.add('summary ~ "%s"' % args.filter)
         return conf['jira'].search_issues("%s" % q)
 
 class UnassignedCommand(OpenUrlCmd):
@@ -167,17 +170,20 @@ class UnassignedCommand(OpenUrlCmd):
     def configure(cls, conf, parser):
         super().configure(conf, parser)
         common_flags(conf, parser)
+        parser.add_argument('--filter', help='Filter applied to the summary', default=None)
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
         if not project and not args.any:
-            raise JiraToolException('Could not find project')
+            raise JiraToolException(could_not_find_project())
 
         q = Query()
         if project and not args.any:
             self.query_projects(conf, args, q, project)
         q.add('assignee IS EMPTY')
         handle_common_filters(conf, args, q)
+        if args.filter:
+            q.add('summary ~ "%s"' % args.filter)
         return conf['jira'].search_issues("%s" % q)
 
 class OpenCommand(Cmd):
