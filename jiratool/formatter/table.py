@@ -1,6 +1,8 @@
 from prettytable import PrettyTable
 
-def truncate(thing, length, suffix='...'):
+def truncate(thing, length, suffix='...', args=None):
+    if args and args.no_truncation:
+        return thing
     if len(thing) <= length:
         return thing
     return ' '.join(thing[:length+1].split(' ')[0:-1]) + suffix
@@ -18,7 +20,7 @@ def table_basic(conf, args, rows):
         args.truncate = 42
 
     for row in rows:
-        this_row = [row.key, truncate(row.fields.summary, args.truncate), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
+        this_row = [row.key, truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
         table.add_row(this_row)
     print(table)
 

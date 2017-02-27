@@ -151,6 +151,7 @@ You can turn off the default options with `--no-default-options`
 * `issues.mine`: your issues for a project.
 * `issues.open`: open one or more issues.
 * `issues.status`: change status for a number of issues: `issues.status STATUS ISSUE [...]`
+* `issues.unassigned`: show unassigned issues
 
 ### Projects
 

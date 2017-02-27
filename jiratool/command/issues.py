@@ -160,6 +160,26 @@ class MineCommand(OpenUrlCmd):
         handle_common_filters(conf, args, q)
         return conf['jira'].search_issues("%s" % q)
 
+class UnassignedCommand(OpenUrlCmd):
+    cmd = 'unassigned'
+
+    @classmethod
+    def configure(cls, conf, parser):
+        super().configure(conf, parser)
+        common_flags(conf, parser)
+
+    def run(self, conf, args):
+        project = self.get_project(conf, args)
+        if not project and not args.any:
+            raise JiraToolException('Could not find project')
+
+        q = Query()
+        if project and not args.any:
+            self.query_projects(conf, args, q, project)
+        q.add('assignee IS EMPTY')
+        handle_common_filters(conf, args, q)
+        return conf['jira'].search_issues("%s" % q)
+
 class OpenCommand(Cmd):
     cmd = 'open'
 

@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('--yaml', help='Output in YAML. Same as --formatter=yaml.basic', action='store_true')
     parser.add_argument('--no-defaults', '-n', help='Do not include default options from configuration files', default=False, action='store_true')
     parser.add_argument('--debug', '-d', help='Print debugging information', default=False, action='store_true')
+    parser.add_argument('--no-truncation', help='Do not truncate in tables', default=False, action='store_true')
 
     subparser = parser.add_subparsers()
 
