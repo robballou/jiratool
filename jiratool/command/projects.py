@@ -2,6 +2,7 @@ from . import Cmd, OpenUrlCmd
 from ..query import Query
 import re
 import warnings
+import pprint
 
 class AllCommand(Cmd):
     cmd = 'all'

@@ -155,7 +155,7 @@ class MineCommand(OpenUrlCmd):
             raise JiraToolException(could_not_find_project())
 
         q = Query()
-        if project and not args.any:
+        if project and ('any' not in args or not args.any):
             self.query_projects(conf, args, q, project)
         q.add('assignee=currentUser()')
         handle_common_filters(conf, args, q)
@@ -222,3 +222,24 @@ class StatusCommand(Cmd):
                 return False
             conf['jira'].transition_issue(issue, transition_id)
         return True
+
+class TransitionsCommand(Cmd):
+    cmd = 'transitions'
+    formatter = 'table.custom'
+
+    @classmethod
+    def configure(cls, conf, parser):
+        parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
+
+    def run(self, conf, args):
+        rows = []
+        for issue_key in args.issue:
+            issue = conf['jira'].issue(issue_key)
+            transitions = conf['jira'].transitions(issue)
+            available_transitions = sorted([transition['name'] for transition in transitions])
+            rows.append({'issue': issue_key, 'transitions': ', '.join(available_transitions)})
+
+        args.headers = ['Issue', 'Transitions']
+        args.align = {'Issue': 'l', 'Transitions': 'l'}
+        args.row_keys = ['issue', 'transitions']
+        return rows

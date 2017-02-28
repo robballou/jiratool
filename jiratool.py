@@ -23,7 +23,11 @@ if __name__ == '__main__':
     conf['jira'] = JIRA(conf['auth']['url'], basic_auth=configuration.get_authentication(conf))
     commands.configure_commands(conf, subparser)
 
-    args = parser.parse_args()
+    cmd_args = sys.argv[1:]
+    if len(sys.argv) == 1 and 'default_command' in conf['options']:
+        cmd_args = [conf['options']['default_command']]
+
+    args = parser.parse_args(cmd_args)
     if 'cmd' not in args:
         parser.print_usage()
         sys.exit()

@@ -131,6 +131,15 @@ options:
 
 You can turn off the default options with `--no-default-options`
 
+### Default command
+
+By default, when you run `jiratool` (without arguments), it will print the usage information. If you want to specify a default command to run instead:
+
+```yaml
+options:
+  default_command: issues.mine
+```
+
 ## Commands
 
 ### Config
@@ -151,6 +160,7 @@ You can turn off the default options with `--no-default-options`
 * `issues.mine`: your issues for a project.
 * `issues.open`: open one or more issues.
 * `issues.status`: change status for a number of issues: `issues.status STATUS ISSUE [...]`
+* `issues.transitions`: list transitions available for these issues
 * `issues.unassigned`: show unassigned issues
 
 ### Projects
