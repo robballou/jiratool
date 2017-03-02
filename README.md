@@ -70,7 +70,11 @@ project: EX1
 ```shell
 # show open issues assigned to you for the current project
 $ jiratool issues.mine --open
+# can also exclude issues with a specific status
+$ jiratool issues.mine --open --not-blocked
+# supports specifying a project
 $ jiratool --project=EX issues.mine
+# supports multiple projects
 $ jiratool --project=EX --project=EX2 issues.mine
 
 # show open issues assigned to jane on the current project
