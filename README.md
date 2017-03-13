@@ -167,6 +167,8 @@ options:
 * `issues.transitions`: list transitions available for these issues
 * `issues.unassigned`: show unassigned issues
 
+`issues.mine` also supports a flag for `--include-epic`. For this functionality to be available, you need to add `options.custom_fields.epic_link` with the field name for this field.
+
 ### Projects
 
 * `projects.all`: list all projects, with filter options.
