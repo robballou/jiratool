@@ -58,7 +58,9 @@ def find_configuration_file():
         if os.path.exists(source_path):
             use_sources.append(source_path)
 
-    cwd = os.getcwd()
+    cwd = os.getenv('PWD')
+    if not cwd:
+        cwd = os.getcwd()
     while cwd != '/':
         if os.path.exists(os.path.join(cwd, '.jira.json')):
             use_sources.append(os.path.join(cwd, '.jira.json'))
