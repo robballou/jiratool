@@ -5,6 +5,22 @@ import yaml
 import base64
 from collections import OrderedDict
 
+def get(configuration, entry):
+    pieces = entry.split('.')
+    current = configuration
+    while pieces:
+        piece = pieces[0]
+        if piece in current:
+            current = current[piece]
+        else:
+            return None
+        if pieces:
+            pieces = pieces[1:]
+    return current
+
+def has(configuration, entry):
+    return get(configuration, entry) is not None
+
 def get_authentication(configuration):
     if 'token' in configuration['auth']:
         decoded = base64.b64decode(configuration['auth']['token'])

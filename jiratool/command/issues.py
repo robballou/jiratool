@@ -1,7 +1,7 @@
 from . import Cmd, OpenUrlCmd
 from ..query import Query
 from ..exceptions import JiraToolException, could_not_find_project
-from ..configuration import get_status_flags
+from ..configuration import get_status_flags, get
 import subprocess
 import shutil
 
@@ -148,6 +148,8 @@ class MineCommand(OpenUrlCmd):
         super().configure(conf, parser)
         common_flags(conf, parser)
         parser.add_argument('--filter', help='Filter applied to the summary', default=None)
+        if get(conf, 'options.custom_fields.epic_link'):
+            parser.add_argument('--include-epic', help='Include epic', default=False, action="store_true")
 
     def run(self, conf, args):
         project = self.get_project(conf, args)
@@ -161,7 +163,11 @@ class MineCommand(OpenUrlCmd):
         handle_common_filters(conf, args, q)
         if args.filter:
             q.add('summary ~ "%s"' % args.filter)
-        return conf['jira'].search_issues("%s" % q)
+        order_by = ['ID']
+        if args.include_epic:
+            order_by = ['"Epic Link"'] + order_by
+        q = "%s ORDER BY %s" % (q, ', '.join(order_by))
+        return conf['jira'].search_issues(q)
 
 class UnassignedCommand(OpenUrlCmd):
     cmd = 'unassigned'

@@ -17,6 +17,23 @@ def statuses():
 
 class TestConfigCommands(unittest.TestCase):
 
+    def test_has(self):
+        config = {
+            'auth': {
+                'token': base64.standard_b64encode(b"example:pass")
+            }
+        }
+        self.assertTrue(configuration.has(config, 'auth'))
+        self.assertTrue(configuration.has(config, 'auth.token'))
+
+    def test_get(self):
+        config = {
+            'auth': {
+                'token': base64.standard_b64encode(b"example:pass")
+            }
+        }
+        self.assertEqual(config['auth']['token'], configuration.get(config, 'auth.token'))
+
     def test_get_authentication_with_base64_encoded_creds(self):
         config = {
             'auth': {

@@ -1,3 +1,4 @@
+from ..configuration import get
 from prettytable import PrettyTable
 
 def truncate(thing, length, suffix='...', args=None):
@@ -11,16 +12,34 @@ def table_basic(conf, args, rows):
     if not rows:
         return
     headers = ['ID', 'Summary', 'Status', 'Link']
+
+    epic_link = get(conf, 'options.custom_fields.epic_link')
+    include_epic = False
+    if 'include_epic' in args and args.include_epic and epic_link:
+        include_epic = True
+
+    if include_epic:
+        headers = ['ID', 'Epic', 'Summary', 'Status', 'Link']
     real_rows = []
     table = PrettyTable(headers)
     table.align['ID'] = 'l'
+    if include_epic:
+        table.align['Epic'] = 'l'
     table.align['Summary'] = 'l'
 
     if 'truncate' not in args:
         args.truncate = 42
 
     for row in rows:
-        this_row = [row.key, truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
+        if include_epic:
+            epic = getattr(row.fields, epic_link)
+            epic_label = ""
+            if epic:
+                epic_issue = conf['jira'].issue(epic)
+                epic_label = epic_issue.fields.summary
+            this_row = [row.key, epic_label, truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
+        else:
+            this_row = [row.key, truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
         table.add_row(this_row)
     print(table)
 
