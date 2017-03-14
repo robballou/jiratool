@@ -211,6 +211,7 @@ class StatusCommand(Cmd):
     def configure(cls, conf, parser):
         parser.add_argument('status', help='Issue status to change it to')
         parser.add_argument('issue', help='The issue key(s) to update', nargs="+")
+        parser.add_argument('--comment', '-c', help="Add a comment to the issue(s)")
 
     def run(self, conf, args):
         for issue_key in args.issue:
@@ -227,6 +228,8 @@ class StatusCommand(Cmd):
                 self.error_message('Could not find transition to: %s. Available transitions: %s' % (args.status, ', '.join(available_transitions)))
                 return False
             conf['jira'].transition_issue(issue, transition_id)
+            if args.comment:
+                conf['jira'].add_comment(issue_key, args.comment)
         return True
 
 class TransitionsCommand(Cmd):
