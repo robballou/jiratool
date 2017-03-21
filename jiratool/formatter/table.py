@@ -31,15 +31,23 @@ def table_basic(conf, args, rows):
         args.truncate = 42
 
     for row in rows:
+        # get the summary and add parent if possible
+        summary = row.fields.summary
+        try:
+            if row.fields.parent:
+                summary = "%s: %s" % (row.fields.parent, summary)
+        except:
+            pass
+
         if include_epic:
             epic = getattr(row.fields, epic_link)
             epic_label = ""
             if epic:
                 epic_issue = conf['jira'].issue(epic)
                 epic_label = epic_issue.fields.summary
-            this_row = [row.key, truncate(epic_label, args.truncate, args=args), truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
+            this_row = [row.key, truncate(epic_label, args.truncate, args=args), truncate(summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
         else:
-            this_row = [row.key, truncate(row.fields.summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
+            this_row = [row.key, truncate(summary, args.truncate, args=args), "%s" % row.fields.status, '%sbrowse/%s' % (conf['auth']['url'], row.key)]
         table.add_row(this_row)
     print(table)
 
