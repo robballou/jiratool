@@ -158,6 +158,7 @@ options:
 ### Issues
 
 * `issues.all`: list all issues for a project.
+* `issues.attachments`: view attachments for this issue.
 * `issues.assign`: assign issues to a user: `issues.assign ASSIGNEE ISSUE [...]`
 * `issues.comment`: add a comment to the issue: `issues.comment "Comment here" ISSUE [...]`
 * `issues.details`: print details about an issue (or issues): `issues.details ISSUE [...]`
