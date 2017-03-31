@@ -186,6 +186,7 @@ options:
 * `id.list`
 * `json.basic`
 * `json.ids`
+* `output.field`
 * `output.lines`
 * `output.list`
 * `output.stderr`
@@ -195,4 +196,5 @@ options:
 * `table.table_basic`
 * `table.truncate`
 * `yaml.basic`
+* `yaml.field`
 * `yaml.ids`
