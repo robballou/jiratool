@@ -58,6 +58,26 @@ class AllCommand(OpenUrlCmd):
             q.add('summary ~ "%s"' % args.filter)
         return conf['jira'].search_issues("%s" % q)
 
+class AttachmentsCommand(Cmd):
+    cmd = 'attachments'
+    formatter = 'yaml.basic'
+
+    @classmethod
+    def configure(cls, conf, parser):
+        parser.add_argument('issue', help='The issue key(s) to get attachments from', nargs="+")
+        parser.add_argument('--key', '-k', help="Only list a specific attachment")
+
+    def run(self, conf, args):
+        attachments = {}
+        for issue_key in args.issue:
+            issue = conf['jira'].issue(issue_key)
+            attachments[issue_key] = []
+            for attachment in issue.fields.attachment:
+                if args.key and attachment.filename != args.key:
+                    continue
+                attachments[issue_key].append({'filename': attachment.filename, 'url': attachment.content})
+        return attachments
+
 class AssignCommand(Cmd):
     cmd = 'assign'
 
@@ -126,12 +146,20 @@ class DetailsCommand(Cmd):
                             lines.append("* %s: %s: %s" % (link.type.outward, link.outwardIssue, link.outwardIssue.fields.summary))
                     except:
                         pass
+            if this_issue.fields.attachment:
+                lines.append('-' * size.columns)
+                lines.append('ATTACHMENTS')
+                lines.append('-' * size.columns)
+                for attachment in this_issue.fields.attachment:
+                    lines.append('- %s: %s' % (attachment.filename, attachment.content))
+
             if this_issue.fields.comment.comments:
                 lines.append('-' * size.columns)
                 lines.append('COMMENTS')
                 lines.append('-' * size.columns)
                 for comment in this_issue.fields.comment.comments:
                     this_comment = conf['jira'].comment(issue, comment)
+                    print(this_comment.__dict__)
                     lines.append('Author:\t%s' % this_comment.author.name)
                     lines.append('Date:\t%s' % this_comment.created)
                     lines.append('\n')

@@ -11,6 +11,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='JIRA Tools')
     parser.add_argument('--project', '-p', help='Project code', nargs="*")
     parser.add_argument('--formatter', '-f', help='Output formatter', default=None)
+    parser.add_argument('--field', help='Specific fields', default=None)
     parser.add_argument('--json', help='Output in JSON. Same as --formatter=json.basic', action='store_true')
     parser.add_argument('--yaml', help='Output in YAML. Same as --formatter=yaml.basic', action='store_true')
     parser.add_argument('--no-defaults', '-n', help='Do not include default options from configuration files', default=False, action='store_true')

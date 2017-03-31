@@ -14,3 +14,9 @@ def lines(conf, args, results):
 
 def list(conf, args, results):
     print(', '.join(results))
+
+def field(conf, args, results):
+    for issue in results:
+        attachments = results[issue]
+        for attachment in attachments:
+            print(attachment[args.field])
