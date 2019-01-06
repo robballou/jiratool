@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/robballou/jiratool.svg?branch=master)](https://travis-ci.org/robballou/jiratool)
 
+**Not maintained anymore, but here if anyone wants to work on it**
+
 A set of command line interfaces for common JIRA tasks.
 
 A couple reasons/design intentions for this tool:
