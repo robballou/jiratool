@@ -1,4 +1,11 @@
 import sys
+import pprint
+
+pp = pprint.PrettyPrinter(indent=2)
+
+def pretty(conf, args, results):
+    print(results)
+    pp.pprint(results)
 
 def stderr(conf, args, results):
     sys.stderr.write(results)

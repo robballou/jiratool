@@ -1,5 +1,8 @@
 from ..configuration import get
 from prettytable import PrettyTable
+import pprint
+
+pp = pprint.PrettyPrinter(indent=2)
 
 def truncate(thing, length, suffix='...', args=None):
     if args and args.no_truncation:
@@ -31,6 +34,8 @@ def table_basic(conf, args, rows):
         args.truncate = 42
 
     for row in rows:
+        if args.debug:
+            pp.pprint(row.__dict__)
         # get the summary and add parent if possible
         summary = row.fields.summary
         try:

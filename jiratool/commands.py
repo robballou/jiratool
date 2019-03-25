@@ -3,6 +3,7 @@ import subprocess
 import jira
 import sys
 import json
+from .exceptions import JiraToolException
 
 def configure_commands(conf, subparser):
     commands = get_commands()
@@ -66,6 +67,9 @@ def run_command(conf, args):
     results = this_command.run(conf, args)
     if not args.no_defaults:
         this_command.update_args(conf, args)
+    if args.debug:
+        print("Results:")
+        print(results)
 
     # handle opening URLs
     if 'open_url' in args and args.open_url:

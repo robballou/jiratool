@@ -1,0 +1,8 @@
+version: '3'
+services:
+  jiratool:
+    build: .
+    volumes:
+      - ./jiratool.py:/app/jiratool.py
+      - ./jiratool:/app/jiratool
+    env_file: .env

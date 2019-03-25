@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/robballou/jiratool.svg?branch=master)](https://travis-ci.org/robballou/jiratool)
 
-**Not maintained anymore, but here if anyone wants to work on it**
-
 A set of command line interfaces for common JIRA tasks.
 
 A couple reasons/design intentions for this tool:
@@ -13,24 +11,58 @@ A couple reasons/design intentions for this tool:
 * It has options for computer-readable formats and enough useful functionality
   that can be used in a scripted setting.
 
-## Requirements
+## Usage
 
-* Python 3
-* `pyyaml`
-* `jira` ([pycontribs/jira](https://github.com/pycontribs/jira))
-* `prettytable`
+There are a few ways currently to run this tool:
 
-## Install
+### Docker
 
-This is developed with Python 3. If your system uses Python 2, [consider using pyenv](https://github.com/yyuu/pyenv) to allow you to run both (or similar tool). Make sure you are using Python 3 when you run the first step of these install instructions.
+If you have Docker, clone the repo and then run the following from that directory:
 
-1. Install packages: `pip install -r requirements.txt`
-1. Add a symlink: `pushd /usr/local/bin && ln -s PATH/jiratool.py jiratool && popd`
-1. Alternatively, you can add an alias: `alias jiratool="python PATH/jiratool.py"`
+```
+docker build -t jiratool .
+```
+
+Then you can create an alias for: `alias jiratool="docker run -it jiratool"`
+
+### Docker compose
+
+If you have Docker, clone the repo and then you can create an alias for: `alias jiratool="docker-compose -f /PATH/docker-compose.yml run jiratool"`
+
+### Python 3
+
+This extension is written in Python 3 and you can run it directly with that as well if you want to install the requirements, etc.
+
+```
+pip install -r requirements.txt
+pushd /usr/local/bin && ln -s PATH/jiratool.py jiratool && popd
+```
+
+Then add an alias for `alias jiratool="python PATH/jiratool.py"`
 
 ## Configuration
 
 This tool currently uses basic auth for functionality. It can build on [jira-cmd](https://github.com/germanrcuriel/jira-cmd)'s configuration or you can make your own configuration.
+
+### environment variables
+
+- `JIRA_URL`: The jira instance URL, for example: `https://example.atlassian.net/`
+- `JIRA_USERNAME`: Your username
+- `JIRA_PASSWORD`: Your password. Be sure not to include this via command line as it may appear in your command history and make sure to manage options for any environment file that specifies it.
+
+### docker configuration
+
+Since docker runs as a guest, it won't have access to local config files, so you have a couple options. For running the image directly:
+
+    docker run -e "JIRA_URL=https://example.atlassian.net" -it jiratool
+
+With docker-compose, we can use a `.env` file (make sure to make it only readable by your user!):
+
+    JIRA_URL=https://example.atlassian.net
+    JIRA_USERNAME=jane@example.com
+    JIRA_PASSWORD=my-voice-is-my-password
+
+Docker compose will then pick up on this file and pass those in.
 
 ### jira-cmd configuration
 

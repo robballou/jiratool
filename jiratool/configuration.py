@@ -4,6 +4,7 @@ import json
 import yaml
 import base64
 from collections import OrderedDict
+from .exceptions import JiraToolException, CouldNotFindConfigurationFileException
 
 def get(configuration, entry):
     pieces = entry.split('.')
@@ -93,7 +94,8 @@ def load():
 
     sources = find_configuration_file()
     if len(sources) == 0:
-        raise JiraToolException('Could not locate configuration file')
+        raise CouldNotFindConfigurationFileException(
+            'Could not locate configuration file')
     configuration = {}
     for source in sources:
         (root, ext) = os.path.splitext(source)

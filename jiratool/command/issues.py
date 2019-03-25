@@ -192,7 +192,7 @@ class MineCommand(OpenUrlCmd):
         if args.filter:
             q.add('summary ~ "%s"' % args.filter)
         order_by = ['ID']
-        if args.include_epic:
+        if 'include_epic' in args and args.include_epic:
             order_by = ['"Epic Link"'] + order_by
         q = "%s ORDER BY %s" % (q, ', '.join(order_by))
         return conf['jira'].search_issues(q)
